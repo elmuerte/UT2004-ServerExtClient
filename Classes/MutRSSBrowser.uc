@@ -6,7 +6,7 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: MutRSSBrowser.uc,v 1.2 2004/03/19 21:40:44 elmuerte Exp $ -->
+	<!-- $Id: MutRSSBrowser.uc,v 1.3 2004/03/20 08:35:07 elmuerte Exp $ -->
 *******************************************************************************/
 
 class MutRSSBrowser extends FloatingWindow;
@@ -30,7 +30,12 @@ function HandleParameters(string param1, string param2)
 function onSelectFeed(GUIComponent sender)
 {
 	lbBrowser.SetContent("", "ÿ");
-	portal.GetFeed(int(cbFeed.GetExtra()));
+	if (portal != none) portal.GetFeed(int(cbFeed.GetExtra()));
+}
+
+function OnWindowClose(bool bCanceceled)
+{
+	if (portal != none) portal.Destroy();
 }
 
 defaultproperties
@@ -44,6 +49,7 @@ defaultproperties
 		bScaleToParent=true
 		FontScale=FNS_Small
 		bReadOnly=true
+		TextAlign=TXTA_Center
 		OnChange=onSelectFeed
 	End Object
 	cbFeed=MRBcbFeed
@@ -65,6 +71,7 @@ defaultproperties
 
 	bAllowedAsLast=True
 	WindowName="RSS Feed Browser"
+	OnClose=OnWindowClose
 
 	WinWidth=0.5
 	WinHeight=0.5
