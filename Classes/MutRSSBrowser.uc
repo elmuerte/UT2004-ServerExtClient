@@ -6,7 +6,7 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: MutRSSBrowser.uc,v 1.3 2004/03/20 08:35:07 elmuerte Exp $ -->
+	<!-- $Id: MutRSSBrowser.uc,v 1.4 2004/03/22 20:30:43 elmuerte Exp $ -->
 *******************************************************************************/
 
 class MutRSSBrowser extends FloatingWindow;
@@ -16,8 +16,17 @@ var automated GUIComboBox cbFeed;
 
 var protected RSSBrowserPortal portal;
 
+function InitComponent(GUIController MyController, GUIComponent MyOwner)
+{
+	super.InitComponent(MyController, MyOwner);
+	cbFeed.Edit.CaptionAlign = TXTA_Center;
+	cbFeed.MyListBox.List.TextAlign = TXTA_Center;
+	cbFeed.MyListBox.bSorted = true;
+}
+
 function HandleParameters(string param1, string param2)
 {
+	super.HandleParameters(param1, param2);
 	foreach AllObjects(class'RSSBrowserPortal', portal)
 	{
 		if (portal != none) break;
@@ -49,7 +58,6 @@ defaultproperties
 		bScaleToParent=true
 		FontScale=FNS_Small
 		bReadOnly=true
-		TextAlign=TXTA_Center
 		OnChange=onSelectFeed
 	End Object
 	cbFeed=MRBcbFeed
@@ -66,6 +74,7 @@ defaultproperties
 		bScaleToParent=true
 		FontScale=FNS_Small
 		Separator="ÿ"
+		bStripColors=false
 	End Object
 	lbBrowser=MRBlbBrowser
 

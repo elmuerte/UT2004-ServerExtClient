@@ -6,19 +6,20 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: RSSBrowserPortal.uc,v 1.2 2004/03/20 08:35:07 elmuerte Exp $ -->
+	<!-- $Id: RSSBrowserPortal.uc,v 1.3 2004/03/22 20:30:43 elmuerte Exp $ -->
 *******************************************************************************/
 
 class RSSBrowserPortal extends Info;
 
 var string BrowserMenu;
-var MutRSS RSSSource;
+var array<RSSFeedRecord> RSSFeeds;
 var MutRSSBrowser Browser;
 
 replication
 {
 	reliable if (Role == ROLE_Authority)
-		AddFeed, FeedDesc, FeedLink, AddEntry, AddEntryDesc;
+		AddFeed, FeedDesc, FeedLink, AddEntry, AddEntryDesc, EndGetFeeds,
+		EndGetFeed;
 
 	reliable if (Role < ROLE_Authority)
 		GetFeeds, GetFeed;
@@ -27,9 +28,11 @@ replication
 /** called my MutRSS when this info object is created */
 event Created()
 {
-	foreach DynamicActors(class'MutRSS', RSSSource)
+	local RSSFeedRecord RSSSource;
+	super.Created();
+	foreach AllObjects(class'RSSFeedRecord', RSSSource)
 	{
-		if (RSSSource != none) break;
+		RSSFeeds[RSSFeeds.length] = RSSSource;
 	}
 	PlayerController(Owner).ClientOpenMenu(BrowserMenu);
 }
@@ -40,14 +43,20 @@ simulated function AddFeed(int id, string ChannelName)
 	Browser.cbFeed.AddItem(ChannelName,, string(id));
 }
 
+/** called at the end of the GetFeeds() call */
+simulated function EndGetFeeds();
+
 /** add the feed description */
 simulated function FeedDesc(int id, string desc)
 {
-	Browser.lbBrowser.AddText(desc$"ÿ-----ÿ");
+	Browser.lbBrowser.AddText(desc$"ÿ-----");
 }
 
 /** add the feed's link */
-simulated function FeedLink(int id, string link);
+simulated function FeedLink(int id, string link)
+{
+	Browser.lbBrowser.AddText(link);
+}
 
 /** add a feed entry */
 simulated function AddEntry(int id, string Title, string Link)
@@ -58,7 +67,13 @@ simulated function AddEntry(int id, string Title, string Link)
 /** add a feed entry's description, only if available */
 simulated function AddEntryDesc(int id, string desc)
 {
-	Browser.lbBrowser.AddText(desc$"ÿ-----ÿ");
+	Browser.lbBrowser.AddText(desc$"ÿ-----");
+}
+
+/** called at the end of the GetFeed() call */
+simulated function EndGetFeed()
+{
+	Browser.lbBrowser.MyList.SetTopItem(0);
 }
 
 // Client side functions
@@ -67,27 +82,29 @@ function GetFeeds()
 {
 	local int i;
 	local string tmp;
-	for (i = 0; i < RSSSource.Feeds.Length; i++)
+	for (i = 0; i < RSSFeeds.Length; i++)
 	{
-		tmp = RSSSource.Feeds[i].ChannelTitle;
-		if (tmp == "") tmp = RSSSource.Feeds[i].rssHost;
+		tmp = RSSFeeds[i].ChannelTitle;
+		if (tmp == "") tmp = RSSFeeds[i].rssHost;
 		AddFeed(i, tmp);
 	}
+	EndGetFeeds();
 }
 
 /** get the feed content of feed 'id' */
 function GetFeed(int id)
 {
 	local int i;
-	if (id >= RSSSource.Feeds.Length) return;
+	if (id >= RSSFeeds.Length) return;
 	if (id < 0) return;
-	FeedLink(id, RSSSource.Feeds[id].ChannelLink);
-	FeedDesc(id, RSSSource.Feeds[id].ChannelDescription);
-	for (i = 0; i < RSSSource.Feeds[id].Entries.length; i++)
+	FeedLink(id, RSSFeeds[id].ChannelLink);
+	FeedDesc(id, RSSFeeds[id].ChannelDescription);
+	for (i = 0; i < RSSFeeds[id].Entries.length; i++)
 	{
-		AddEntry(i, RSSSource.Feeds[id].Entries[i].Title, RSSSource.Feeds[id].Entries[i].Link);
-		if (RSSSource.Feeds[id].Entries[i].Desc != "") AddEntryDesc(i, RSSSource.Feeds[id].Entries[i].Desc);
+		AddEntry(i, RSSFeeds[id].Entries[i].Title, RSSFeeds[id].Entries[i].Link);
+		if (RSSFeeds[id].Entries[i].Desc != "") AddEntryDesc(i, repl(RSSFeeds[id].Entries[i].Desc, "\\\"", "\""));
 	}
+	EndGetFeed();
 }
 
 defaultproperties
