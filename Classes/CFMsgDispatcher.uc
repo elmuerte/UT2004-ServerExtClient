@@ -6,7 +6,7 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: CFMsgDispatcher.uc,v 1.1 2004/05/05 10:02:33 elmuerte Exp $ -->
+	<!-- $Id: CFMsgDispatcher.uc,v 1.2 2004/09/27 07:58:28 elmuerte Exp $ -->
 *******************************************************************************/
 
 class CFMsgDispatcher extends Info;
@@ -26,7 +26,7 @@ simulated function Dispatch(PlayerController PC, int Msg)
 	if (PC.Player == none) return;
 	if (PC.Player.GUIController == none) return;
 	if (ChatFilterMsg(GUIController(PC.Player.GUIController).ActivePage) == none)
-	PC.ClientOpenMenu(ClientSidePackage$".ChatFilterMsg", true, String(Msg));
+	PC.ClientOpenMenu(ClientSidePackageChatFilter$".ChatFilterMsg", true, String(Msg));
 }
 
 simulated function ChangeNamerequest(PlayerController PC, int Msg)
@@ -36,7 +36,7 @@ simulated function ChangeNamerequest(PlayerController PC, int Msg)
 	if (PC.Player == none) return;
 	if (PC.Player.GUIController == none) return;
 	if (CFChangeNick(GUIController(PC.Player.GUIController).ActivePage) == none)
-	PC.ClientOpenMenu(ClientSidePackage$".CFChangeNick", false, String(Msg));
+	PC.ClientOpenMenu(ClientSidePackageChatFilter$".CFChangeNick", false, String(Msg));
 }
 
 simulated function MutedHud(PlayerController PC)
@@ -45,7 +45,7 @@ simulated function MutedHud(PlayerController PC)
 	if (PC == none) return;
 	if (PC.Player == none) return;
 	if (PC.Player.InteractionMaster == none) return;
-	PC.Player.InteractionMaster.AddInteraction(ClientSidePackage$".CFMutedHud", PC.Player);
+	PC.Player.InteractionMaster.AddInteraction(ClientSidePackageChatFilter$".CFMutedHud", PC.Player);
 }
 
 defaultproperties
