@@ -6,7 +6,7 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: RSSBrowserPortal.uc,v 1.3 2004/03/22 20:30:43 elmuerte Exp $ -->
+	<!-- $Id: RSSBrowserPortal.uc,v 1.4 2004/05/10 22:10:45 elmuerte Exp $ -->
 *******************************************************************************/
 
 class RSSBrowserPortal extends Info;
@@ -110,5 +110,5 @@ function GetFeed(int id)
 defaultproperties
 {
 	RemoteRole=ROLE_AutonomousProxy
-	BrowserMenu="ServerExtClient.MutRSSBrowser"
+	BrowserMenu="%clientpackage%.MutRSSBrowser"
 }

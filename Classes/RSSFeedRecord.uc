@@ -6,13 +6,16 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: RSSFeedRecord.uc,v 1.1 2004/03/22 20:30:43 elmuerte Exp $ -->
+	<!-- $Id: RSSFeedRecord.uc,v 1.2 2004/05/10 22:10:45 elmuerte Exp $ -->
 *******************************************************************************/
 
 class RSSFeedRecord extends LibHTTP2.NewsFeed config(RSS);
 
 /** the color to use when displaying the content of this feed */
 var(Config) config color TextColor;
+
+/** set this to the config file used */
+var const string ConfigFile;
 
 struct HTMLSpecialCharItem
 {
@@ -112,5 +115,7 @@ defaultproperties
 	HTMLSpecialChars(4)=(from="&gt;",to=">")
 	HTMLSpecialChars(5)=(from="&copy;",to="©")
 	HTMLSpecialChars(6)=(from="&reg;",to="®")
+
+	ConfigFile="RSS"
 }
 
