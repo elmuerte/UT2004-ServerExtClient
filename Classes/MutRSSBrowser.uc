@@ -6,7 +6,7 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: MutRSSBrowser.uc,v 1.4 2004/03/22 20:30:43 elmuerte Exp $ -->
+	<!-- $Id: MutRSSBrowser.uc,v 1.5 2004/05/11 08:04:41 elmuerte Exp $ -->
 *******************************************************************************/
 
 class MutRSSBrowser extends FloatingWindow;
@@ -24,13 +24,10 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	cbFeed.MyListBox.bSorted = true;
 }
 
-function HandleParameters(string param1, string param2)
+function AssignPortal(RSSBrowserPortal newportal)
 {
-	super.HandleParameters(param1, param2);
-	foreach AllObjects(class'RSSBrowserPortal', portal)
-	{
-		if (portal != none) break;
-	}
+	cbFeed.Clear();
+	portal = newportal;
 	if (portal == none) return;
 	portal.browser = self;
  	portal.GetFeeds();

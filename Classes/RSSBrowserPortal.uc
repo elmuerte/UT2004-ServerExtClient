@@ -6,7 +6,7 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: RSSBrowserPortal.uc,v 1.4 2004/05/10 22:10:45 elmuerte Exp $ -->
+	<!-- $Id: RSSBrowserPortal.uc,v 1.5 2004/05/11 08:04:41 elmuerte Exp $ -->
 *******************************************************************************/
 
 class RSSBrowserPortal extends Info;
@@ -19,7 +19,7 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		AddFeed, FeedDesc, FeedLink, AddEntry, AddEntryDesc, EndGetFeeds,
-		EndGetFeed;
+		EndGetFeed, FindBrowserWindow;
 
 	reliable if (Role < ROLE_Authority)
 		GetFeeds, GetFeed;
@@ -35,6 +35,16 @@ event Created()
 		RSSFeeds[RSSFeeds.length] = RSSSource;
 	}
 	PlayerController(Owner).ClientOpenMenu(BrowserMenu);
+	FindBrowserWindow();
+}
+
+simulated function FindBrowserWindow()
+{
+	foreach AllObjects(class'MutRSSBrowser', Browser)
+	{
+		if (Browser != none) break;
+	}
+	if (Browser != none) Browser.AssignPortal(self);
 }
 
 /** add a RSS Feed to the selection list */
@@ -109,6 +119,5 @@ function GetFeed(int id)
 
 defaultproperties
 {
-	RemoteRole=ROLE_AutonomousProxy
-	BrowserMenu="%clientpackage%.MutRSSBrowser"
+	RemoteRole=ROLE_SimulatedProxy
 }
