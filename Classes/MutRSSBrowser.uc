@@ -6,13 +6,32 @@
 	Released under the Open Unreal Mod License							<br />
 	http://wiki.beyondunreal.com/wiki/OpenUnrealModLicense				<br />
 
-	<!-- $Id: MutRSSBrowser.uc,v 1.1 2004/03/19 10:41:11 elmuerte Exp $ -->
+	<!-- $Id: MutRSSBrowser.uc,v 1.2 2004/03/19 21:40:44 elmuerte Exp $ -->
 *******************************************************************************/
 
 class MutRSSBrowser extends FloatingWindow;
 
 var automated GUIRichTextBox lbBrowser;
 var automated GUIComboBox cbFeed;
+
+var protected RSSBrowserPortal portal;
+
+function HandleParameters(string param1, string param2)
+{
+	foreach AllObjects(class'RSSBrowserPortal', portal)
+	{
+		if (portal != none) break;
+	}
+	if (portal == none) return;
+	portal.browser = self;
+ 	portal.GetFeeds();
+}
+
+function onSelectFeed(GUIComponent sender)
+{
+	lbBrowser.SetContent("", "ÿ");
+	portal.GetFeed(int(cbFeed.GetExtra()));
+}
 
 defaultproperties
 {
@@ -24,6 +43,8 @@ defaultproperties
 		bBoundToParent=true
 		bScaleToParent=true
 		FontScale=FNS_Small
+		bReadOnly=true
+		OnChange=onSelectFeed
 	End Object
 	cbFeed=MRBcbFeed
 
