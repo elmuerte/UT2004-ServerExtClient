@@ -4,3 +4,6 @@ ClientOptional=False
 ServerSideOnly=False
 Official=False
 
+[Package_Description]
+ServerExt Client side package for ChatFilter
+
